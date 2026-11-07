@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Grammar - Classify words - الدرس الناطق التفاعلي</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Comic+Neue:ital,wght@0,700;1,700&family=Fredoka:wght@600;700&family=Merriweather:ital,wght@1,700;1,900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --worksheet-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #fff3e0 0%, #f3e5f5 50%, #e1f5fe 100%);
+            min-height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+        }
+
+        .worksheet-font {
+            font-family: 'Comic Neue', 'Nunito', 'Fredoka', sans-serif;
+            letter-spacing: 0.01em;
+        }
+
+        .classify-title-font {
+            font-family: 'Merriweather', 'Georgia', serif;
+            font-style: italic;
+            font-weight: 900;
+        }
+
+        /* Worksheet Paper Frame */
+        .poster-frame {
+            background: #ffffff;
+            box-shadow: 0 20px 60px rgba(60, 40, 90, 0.18), 0 0 0 6px rgba(255, 255, 255, 0.95);
+        }
+
+        /* 12 Word Cards Styling matching Page 8 */
+        .word-card-wrap {
+            position: relative;
+            padding-top: 14px;
+            cursor: pointer;
+        }
+
+        .word-card-box {
+            background: #ffffff;
+            border: 2.6px solid #1e293b;
+            border-radius: 28px;
+            height: 132px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 18px 8px 8px 8px;
+            transition: background-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .word-card-wrap:hover .word-card-box {
+            background-color: #f8fafc;
+        }
+
+        /* Static & Steady Highlight when Card is Active (NO scaling or jumping) */
+        .word-card-wrap.active-reading .word-card-box {
+            background-color: #fff9c4 !important;
+            box-shadow: 0 0 0 3px #fbc02d;
+        }
+
+        /* Top Blue Pill Label on each Card */
+        .word-pill-label {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, #90caf9 0%, #64b5f6 100%);
+            border: 2px solid #1e293b;
+            border-radius: 999px;
+            padding: 1px 16px;
+            min-width: 88px;
+            text-align: center;
+            z-index: 15;
+            font-family: 'Comic Neue', 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 19px;
+            color: #0f172a;
+            line-height: 1.25;
+            white-space: nowrap;
+        }
+
+        /* Static Highlight on the Word Label itself when read */
+        .word-pill-label.word-active {
+            background: #ffe082 !important;
+            box-shadow: 0 0 0 2.5px #ffa000;
+            color: #000000;
+        }
+
+        /* 4-Pointed Decorative Stars on Card Corners */
+        .star-top-right {
+            position: absolute;
+            top: 10px;
+            right: -7px;
+            width: 28px;
+            height: 28px;
+            z-index: 16;
+            pointer-events: none;
+        }
+
+        .star-bottom-left {
+            position: absolute;
+            bottom: -6px;
+            left: -7px;
+            width: 26px;
+            height: 26px;
+            z-index: 16;
+            pointer-events: none;
+        }
+
+        /* 4 Pink Category Boxes at the Bottom */
+        .category-outer-frame {
+            position: relative;
+            background: linear-gradient(135deg, #c25983 0%, #b34672 50%, #9c355f 100%);
+            border: 2.2px solid #6b2141;
+            border-radius: 22px;
+            padding: 14px 12px 12px 12px;
+            box-shadow: 0 4px 12px rgba(156, 53, 95, 0.16);
+        }
+
+        /* Subtle Polka Dots Pattern on Category Frame */
+        .category-outer-frame::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.22) 2px, transparent 2px);
+            background-size: 14px 14px;
+            pointer-events: none;
+        }
+
+        .category-inner-paper {
+            position: relative;
+            background: #ffffff;
+            border: 2px solid #7a284b;
+            border-radius: 16px;
+            padding: 16px 14px 10px 14px;
+            z-index: 5;
+        }
+
+        .category-header-pill {
+            position: absolute;
+            top: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, #ffffff 0%, #fce4ec 100%);
+            border: 2px solid #7a284b;
+            border-radius: 999px;
+            padding: 1px 22px 1px 12px;
+            min-width: 138px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            z-index: 10;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .category-header-pill.word-active {
+            background: #ffe082 !important;
+            box-shadow: 0 0 0 2.5px #ffa000;
+        }
+
+        /* Category Answer Row (a-, b-, c-) */
+        .cat-slot-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 3px 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            border-bottom: 1.5px dashed rgba(244, 143, 177, 0.35);
+        }
+
+        .cat-slot-row:last-child {
+            border-bottom: none;
+        }
+
+        .cat-slot-row:hover {
+            background-color: rgba(252, 228, 236, 0.5);
+        }
+
+        .cat-slot-row.active-reading {
+            background-color: #fff59d !important;
+            box-shadow: inset 0 0 0 2px #fbc02d;
+        }
+
+        .cat-answer-word {
+            display: inline-block;
+            padding: 0 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            color: #1e3a8a;
+            opacity: 0;
+        }
+
+        .show-all-answers .cat-answer-word,
+        .cat-slot-row.revealed .cat-answer-word {
+            opacity: 1;
+        }
+
+        .cat-answer-word.word-active {
+            background-color: #ffe082;
+            box-shadow: 0 0 0 2px #ffa000;
+            color: #000000;
+        }
+
+        /* Target Word Generic Static Highlight */
+        .target-word-box {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 8px;
+        }
+
+        .target-word-box.word-active {
+            background-color: #ffe082;
+            box-shadow: 0 0 0 2px #ffa000;
+        }
+
+        /* Floating Pointing Finger (100% Static under the word, NEVER sliding on letters) */
+        #reading-finger {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            transform: translate(-50%, 0);
+            filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.32));
+        }
+
+        #reading-finger.visible {
+            opacity: 1;
+        }
+
+        #reading-finger.reading-active {
+            transform: translate(-50%, 0);
+        }
+
+        .finger-ripple {
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            width: 22px;
+            height: 22px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 3px solid #ff2e7e;
+            background: rgba(255, 230, 0, 0.45);
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ff9800; border-radius: 99px; }
+    </style>
+</head>
+<body class="py-3 px-2 sm:px-4 md:px-6 flex flex-col items-center">
+
+    <!-- ==================== TOP INTERACTIVE CONTROL BAR ==================== -->
+    <div class="w-full max-w-[900px] mb-3 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-orange-200 p-3 flex flex-wrap items-center justify-between gap-2 z-40 sticky top-2">
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <!-- Auto Play All -->
+            <button id="btn-auto-play" onclick="toggleAutoPlay()" class="flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-white bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 shadow-md shadow-orange-200 transition active:scale-95 text-sm sm:text-base">
+                <i id="icon-auto-play" class="fa-solid fa-play"></i>
+                <span id="text-auto-play">قراءة الكل بالترتيب</span>
+            </button>
+
+            <!-- Read Categories Only Button -->
+            <button onclick="playCategoriesInOrder()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-purple-900 bg-purple-100 hover:bg-purple-200 border border-purple-300 transition text-xs sm:text-sm" title="قراءة جداول التصنيف الأربعة مع كلماتها">
+                <i class="fa-solid fa-layer-group text-purple-600"></i>
+                <span>قراءة التصنيفات</span>
+            </button>
+
+            <!-- Show/Hide Classified Words in Boxes (Shown by default) -->
+            <button id="btn-answers" onclick="toggleShowAllAnswers()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-700 border border-rose-600 shadow-sm transition text-xs sm:text-sm" title="إظهار أو إخفاء الكلمات المصنفة في الجداول الأربعة">
+                <i class="fa-solid fa-check-double"></i>
+                <span id="answers-label">التصنيف معروض</span>
+            </button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <!-- Educational Teacher Voice Selector -->
+            <div class="flex items-center gap-1 bg-amber-50 border border-amber-200 rounded-xl px-2.5 py-1.5">
+                <i class="fa-solid fa-chalkboard-user text-amber-600 text-xs sm:text-sm"></i>
+                <select id="voice-select" onchange="handleVoiceChange(this.value)" class="bg-transparent font-bold text-amber-900 text-xs sm:text-sm focus:outline-none cursor-pointer max-w-[155px] sm:max-w-[190px]" title="اختر صوت المعلم التعليمي">
+                    <option value="auto">صوت المعلم التعليمي (تلقائي)</option>
+                </select>
+            </div>
+
+            <!-- Speed Toggle -->
+            <button id="btn-speed" onclick="cycleSpeechSpeed()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-sky-800 bg-sky-100 hover:bg-sky-200 border border-sky-200 transition text-xs sm:text-sm">
+                <i class="fa-solid fa-gauge-high text-sky-600"></i>
+                <span id="speed-label">السرعة: تعليمي واضح</span>
+            </button>
+
+            <!-- Repeat Toggle -->
+            <button id="btn-repeat" onclick="toggleRepeatWord()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 border border-emerald-200 transition text-xs sm:text-sm">
+                <i class="fa-solid fa-repeat text-emerald-600"></i>
+                <span id="repeat-label">النطق: مرة واحدة</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN WORKSHEET REPLICA CONTAINER ==================== -->
+    <main id="poster-container" class="poster-frame show-all-answers w-full max-w-[900px] rounded-[24px] overflow-hidden relative flex flex-col justify-between pb-2">
+
+        <!-- 1. EXACT WORKSHEET HEADER (Orange Scallops, 3 Puzzle Pieces, Top Grammar, and "Classify words :" Sign) -->
+        <header id="worksheet-header" class="relative w-full bg-white pt-0 pb-1 overflow-hidden select-none" dir="ltr">
+            <svg viewBox="0 0 900 140" class="w-full h-auto block">
+                <defs>
+                    <linearGradient id="topOrangeGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#ff8a3d"/>
+                        <stop offset="50%" stop-color="#ff7024"/>
+                        <stop offset="100%" stop-color="#ff5714"/>
+                    </linearGradient>
+                    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="125%">
+                        <feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-opacity="0.18"/>
+                    </filter>
+                </defs>
+
+                <!-- Top Orange Scalloped Border -->
+                <rect x="0" y="0" width="900" height="28" fill="url(#topOrangeGrad)"/>
+                <g fill="#ffffff">
+                    <circle cx="25" cy="35" r="21"/>
+                    <circle cx="70" cy="35" r="21"/>
+                    <circle cx="115" cy="35" r="21"/>
+                    <circle cx="160" cy="35" r="21"/>
+                    <circle cx="205" cy="35" r="21"/>
+                    <circle cx="250" cy="35" r="21"/>
+                    <circle cx="295" cy="35" r="21"/>
+                    <circle cx="340" cy="35" r="21"/>
+                    <circle cx="385" cy="35" r="21"/>
+                    <circle cx="430" cy="35" r="21"/>
+                    <circle cx="475" cy="35" r="21"/>
+                    <circle cx="520" cy="35" r="21"/>
+                    <circle cx="565" cy="35" r="21"/>
+                    <circle cx="610" cy="35" r="21"/>
+                    <circle cx="655" cy="35" r="21"/>
+                    <circle cx="700" cy="35" r="21"/>
+                    <circle cx="745" cy="35" r="21"/>
+                    <circle cx="790" cy="35" r="21"/>
+                    <circle cx="835" cy="35" r="21"/>
+                    <circle cx="880" cy="35" r="21"/>
+                </g>
+
+                <!-- Top-Left Blue Ribbon Corner + 3 Interlocking Puzzle Pieces -->
+                <path d="M 0,0 L 95,0 C 60,42 32,78 0,125 Z" fill="#4a7c9b" opacity="0.9"/>
+                <g filter="url(#softShadow)">
+                    <!-- Blue Puzzle Piece -->
+                    <g transform="translate(42, 3) rotate(-4)">
+                        <path d="M10,14 H30 C28,5 43,5 41,14 H60 V32 C69,30 69,44 60,42 V60 H41 C43,51 28,51 30,60 H10 V42 C19,44 19,30 10,32 Z"
+                              fill="#6ca0f0" stroke="#3b69b8" stroke-width="2"/>
+                    </g>
+                    <!-- Yellow Puzzle Piece -->
+                    <g transform="translate(98, 1) rotate(5)">
+                        <path d="M10,14 H30 C28,5 43,5 41,14 H60 V32 C69,30 69,44 60,42 V60 H41 C43,69 28,69 30,60 H10 V42 C1,44 1,30 10,32 Z"
+                              fill="#ffc13b" stroke="#d48b00" stroke-width="2"/>
+                    </g>
+                    <!-- Coral/Pink Puzzle Piece -->
+                    <g transform="translate(156, 3) rotate(-5)">
+                        <path d="M10,14 H30 C28,23 43,23 41,14 H60 V32 C69,30 69,44 60,42 V60 H10 V42 C1,44 1,30 10,32 Z"
+                              fill="#e58c8a" stroke="#b85d5b" stroke-width="2"/>
+                    </g>
+                </g>
+
+                <!-- Top-Right "Top Grammar" Badge -->
+                <g filter="url(#softShadow)" transform="translate(658, 6)" class="cursor-pointer" onclick="speakStandaloneWord('Top Grammar', document.getElementById('top-grammar-text'))">
+                    <rect x="0" y="0" width="232" height="44" rx="16" fill="#ffffff" stroke="#d0d7de" stroke-width="2"/>
+                    <text id="top-grammar-text" x="116" y="30" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="800" font-size="27" fill="#1e1b4b">Top Grammar</text>
+                </g>
+            </svg>
+
+            <!-- "Classify words :" Rectangular Sign Box -->
+            <div class="px-6 sm:px-12 -mt-12 sm:-mt-14 mb-2 relative z-10">
+                <div onclick="speakStandaloneWord('Classify words', document.getElementById('classify-heading-word'))"
+                     class="inline-block bg-white border-[2.5px] border-[#7c5337] shadow-[0_3px_0_#7c5337,0_5px_10px_rgba(0,0,0,0.12)] px-6 sm:px-8 py-1.5 cursor-pointer hover:bg-amber-50/40 transition">
+                    <span id="classify-heading-word" class="classify-title-font target-word-box text-2xl sm:text-[31px] text-slate-900 tracking-wide">Classify words :</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 2. THE 12 ILLUSTRATED WORD CARDS (3 ROWS x 4 COLUMNS) -->
+        <section class="relative px-4 sm:px-8 pt-1 pb-4 z-10" dir="ltr">
+            <div id="cards-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 sm:gap-x-5 gap-y-4">
+                <!-- Dynamically populated by JS with exact illustrations -->
+            </div>
+        </section>
+
+        <!-- 3. SUBTLE CENTER WATERMARK ("القمة Top") + 4 CLASSIFICATION BOXES -->
+        <section class="relative px-5 sm:px-12 pt-3 pb-4 z-10" dir="ltr">
+            <!-- Center Background Watermark matching the Poster -->
+            <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center opacity-[0.10] z-0">
+                <span class="font-black text-5xl text-rose-800 mb-1">القمة</span>
+                <div class="flex gap-2 text-rose-700 text-xl">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </div>
+            </div>
+
+            <!-- 2x2 Grid of Classification Boxes (persons, places, Things, Animals) -->
+            <div id="categories-grid" class="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-x-10 md:gap-x-16 gap-y-6">
+                <!-- Dynamically populated by JS -->
+            </div>
+        </section>
+
+        <!-- 4. WORKSHEET FOOTER: "Mrs.Engy Moris" | Page "8" | "TOP" + Kids on Pencil -->
+        <footer class="relative z-10 w-full mt-2 pt-3 pb-2 px-5 sm:px-8 flex items-end justify-between gap-2 select-none bg-gradient-to-t from-[#d4e157]/70 via-[#e6ee9c]/30 to-transparent" dir="ltr">
+            <!-- Left Badge: Mrs.Engy Moris -->
+            <div onclick="speakStandaloneWord('Mrs. Engy Moris', document.getElementById('footer-author-text'))"
+                 class="cursor-pointer bg-white border-2 border-slate-700 rounded-xl px-4 py-1 shadow-[3px_4px_0px_#334155] flex items-center gap-1.5">
+                <span id="footer-author-text" class="worksheet-font target-word-box text-lg sm:text-xl font-black text-slate-900 tracking-tight">Mrs.Engy Moris</span>
+            </div>
+
+            <!-- Center Page Number Circle: 8 -->
+            <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-white border-4 border-slate-200 shadow-inner mb-1">
+                <span class="worksheet-font text-xl font-black text-slate-800 leading-none">8</span>
+            </div>
+
+            <!-- Right Logo: "TOP" Sign + Two Cartoon Kids on Giant Pencil -->
+            <div onclick="speakStandaloneWord('Top', document.getElementById('footer-top-text'))" class="cursor-pointer flex items-end">
+                <div class="bg-gradient-to-b from-[#7c3f23] to-[#562814] border-2 border-[#3e1b0c] rounded px-3 py-0.5 shadow-md mr-1 mb-1">
+                    <span id="footer-top-text" class="worksheet-font target-word-box text-white font-black text-lg sm:text-xl tracking-wider">TOP</span>
+                </div>
+                <svg viewBox="0 0 110 72" class="w-24 sm:w-28 h-16 overflow-visible">
+                    <!-- Slanted Giant Pencil at bottom right -->
+                    <g transform="translate(8, 36) rotate(-18)">
+                        <rect x="12" y="8" width="76" height="16" rx="2" fill="#26a69a" stroke="#00695c" stroke-width="1.5"/>
+                        <polygon points="12,8 0,16 12,24" fill="#ffe0b2" stroke="#8d6e63" stroke-width="1.5"/>
+                        <polygon points="4,13.5 0,16 4,18.5" fill="#1e293b"/>
+                    </g>
+                    <!-- Boy 1 (Left) -->
+                    <g transform="translate(14, 8)">
+                        <path d="M12,32 L24,32 L26,48 L10,48 Z" fill="#84cc16"/>
+                        <line x1="11" y1="37" x2="25" y2="37" stroke="#365314" stroke-width="2.5"/>
+                        <line x1="10" y1="43" x2="26" y2="43" stroke="#365314" stroke-width="2.5"/>
+                        <circle cx="18" cy="19" r="11.5" fill="#fde0c5"/>
+                        <path d="M6,17 C8,5 28,5 30,17 C24,12 12,12 6,17 Z" fill="#facc15"/>
+                        <circle cx="14" cy="19" r="1.8" fill="#1e293b"/>
+                        <circle cx="22" cy="19" r="1.8" fill="#1e293b"/>
+                        <path d="M15,24 Q18,27 21,24" fill="none" stroke="#9a3412" stroke-width="1.6"/>
+                    </g>
+                    <!-- Kid 2 (Right) -->
+                    <g transform="translate(52, 0)">
+                        <path d="M14,32 L28,32 L30,48 L12,48 Z" fill="#881337"/>
+                        <circle cx="21" cy="19" r="12" fill="#fde0c5"/>
+                        <path d="M8,17 C10,3 32,3 34,17 C27,11 15,11 8,17 Z" fill="#451a03"/>
+                        <circle cx="17" cy="19" r="1.8" fill="#1e293b"/>
+                        <circle cx="25" cy="19" r="1.8" fill="#1e293b"/>
+                        <path d="M17,24 Q21,28 25,24 Z" fill="#be123c"/>
+                    </g>
+                </svg>
+            </div>
+        </footer>
+    </main>
+
+    <!-- ==================== THE STEADY POINTING FINGER (NO LETTER MOVEMENT) ==================== -->
+    <div id="reading-finger" aria-hidden="true">
+        <div class="finger-ripple"></div>
+        <!-- Clean 3D-Styled Pointing Hand SVG pointing UP directly under the whole English word -->
+        <svg width="58" height="72" viewBox="0 0 68 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="skinGrad" x1="15" y1="4" x2="52" y2="68" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#FFE0C2"/>
+                    <stop offset="55%" stop-color="#FFCBA4"/>
+                    <stop offset="100%" stop-color="#F2AC7E"/>
+                </linearGradient>
+                <linearGradient id="cuffGrad" x1="16" y1="62" x2="54" y2="82" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#FF5722"/>
+                    <stop offset="100%" stop-color="#D84315"/>
+                </linearGradient>
+            </defs>
+            <circle cx="30" cy="7" r="6" fill="#FFEB3B" opacity="0.85"/>
+            <path d="M23 36V12C23 7.58172 26.5817 4 31 4C35.4183 4 39 7.58172 39 12V34" fill="url(#skinGrad)" stroke="#8D4E2A" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M26.5 11.5C26.5 8.8 28.5 7 31 7C33.5 7 35.5 8.8 35.5 11.5V14.5C35.5 15.3 34.8 16 34 16H28C27.2 16 26.5 15.3 26.5 14.5V11.5Z" fill="#FFF3E8" stroke="#D79973" stroke-width="1.2"/>
+            <path d="M39 29C39 26.2 41.2 24 44 24C46.8 24 49 26.2 49 29V36C49 33.2 51.2 31 54 31C56.8 31 59 33.2 59 36V45C59 56.5 50.5 65 39 65H27C17.6 65 11 58.2 11 48.5V41C11 36.5 14.8 33 19.2 33C21.2 33 23 34.2 23 36" fill="url(#skinGrad)" stroke="#8D4E2A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 45C12 40.5 16 37 20.5 37H25C27.8 37 30 39.2 30 42C30 44.8 27.8 47 25 47H18" fill="url(#skinGrad)" stroke="#8D4E2A" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M39 29V41" stroke="#8D4E2A" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M49 33V43" stroke="#8D4E2A" stroke-width="2.4" stroke-linecap="round"/>
+            <rect x="17" y="62" width="36" height="17" rx="6" fill="url(#cuffGrad)" stroke="#BF360C" stroke-width="2.4"/>
+            <circle cx="25" cy="70.5" r="2.6" fill="#FFD54F"/>
+            <circle cx="45" cy="70.5" r="2.6" fill="#FFD54F"/>
+        </svg>
+    </div>
+
+    <!-- ==================== APPLICATION LOGIC ==================== -->
+    <script>
+        /**
+         * High-Definition faithful SVG Illustrations matching each of the 12 cards
+         * in "Top Grammar - Classify words :" (Page 8 - image_84e27d.jpg) without changing any visual detail.
+         */
+        const CARD_SVGS = {
+            // 1. Children: 4 happy kids standing side by side (girl in pink, boy in green, girl in purple, boy in red waving)
+            children: `
+                <svg viewBox="0 0 180 110" class="w-full h-full">
+                    <ellipse cx="90" cy="102" rx="72" ry="5" fill="rgba(0,0,0,0.08)"/>
+                    <!-- Kid 1: Girl in pink dress (left) -->
+                    <g transform="translate(14, 18)">
+                        <line x1="16" y1="58" x2="14" y2="80" stroke="#f5b895" stroke-width="4.5" stroke-linecap="round"/>
+                        <line x1="26" y1="58" x2="28" y2="80" stroke="#f5b895" stroke-width="4.5" stroke-linecap="round"/>
+                        <path d="M8,36 L34,42" stroke="#f5b895" stroke-width="4.5" stroke-linecap="round"/>
+                        <path d="M12,34 L30,34 L34,62 L8,62 Z" fill="#ec407a" stroke="#880e4f" stroke-width="1.5"/>
+                        <circle cx="21" cy="18" r="13" fill="#f5b895" stroke="#5d4037" stroke-width="1.5"/>
+                        <path d="M8,18 C8,4 34,4 34,18 C28,11 14,11 8,18 Z" fill="#5d4037"/>
+                        <circle cx="17" cy="18" r="1.8" fill="#1e293b"/>
+                        <circle cx="25" cy="18" r="1.8" fill="#1e293b"/>
+                        <path d="M17,23 Q21,27 25,23" fill="none" stroke="#b71c1c" stroke-width="1.8" stroke-linecap="round"/>
+                        <rect x="11" y="78" width="7" height="5" rx="2" fill="#d81b60"/>
+                        <rect x="25" y="78" width="7" height="5" rx="2" fill="#d81b60"/>
+                    </g>
+                    <!-- Kid 2: Boy in green shirt & brown pants -->
+                    <g transform="translate(50, 12)">
+                        <rect x="14" y="60" width="7" height="24" rx="2" fill="#5d4037"/>
+                        <rect x="23" y="60" width="7" height="24" rx="2" fill="#5d4037"/>
+                        <path d="M11,34 L33,34 L32,62 L12,62 Z" fill="#689f38" stroke="#33691e" stroke-width="1.5"/>
+                        <circle cx="22" cy="17" r="13.5" fill="#f5b895" stroke="#5d4037" stroke-width="1.5"/>
+                        <path d="M8,15 C10,2 34,2 36,15 C28,9 16,9 8,15 Z" fill="#4e342e"/>
+                        <circle cx="18" cy="17" r="1.8" fill="#1e293b"/>
+                        <circle cx="26" cy="17" r="1.8" fill="#1e293b"/>
+                        <path d="M18,22 Q22,26 26,22 Z" fill="#d32f2f"/>
+                    </g>
+                    <!-- Kid 3: Girl in purple/blue top & skirt -->
+                    <g transform="translate(86, 16)">
+                        <line x1="16" y1="58" x2="15" y2="82" stroke="#f5b895" stroke-width="4.5" stroke-linecap="round"/>
+                        <line x1="26" y1="58" x2="27" y2="82" stroke="#f5b895" stroke-width="4.5" stroke-linecap="round"/>
+                        <path d="M12,34 L30,34 L33,60 L9,60 Z" fill="#5c6bc0" stroke="#283593" stroke-width="1.5"/>
+                        <circle cx="21" cy="18" r="13" fill="#f5b895" stroke="#5d4037" stroke-width="1.5"/>
+                        <path d="M8,18 C8,5 34,5 34,18 C28,11 14,11 8,18 Z" fill="#3e2723"/>
+                        <circle cx="17" cy="18" r="1.8" fill="#1e293b"/>
+                        <circle cx="25" cy="18" r="1.8" fill="#1e293b"/>
+                        <path d="M17,23 Q21,27 25,23" fill="none" stroke="#b71c1c" stroke-width="1.8" stroke-linecap="round"/>
+                    </g>
+                    <!-- Kid 4: Boy in red shirt & blue jeans waving (right) -->
+                    <g transform="translate(120, 13)">
+                        <path d="M30,38 L44,24" stroke="#f5b895" stroke-width="4.5" stroke-linecap="round"/>
+                        <rect x="14" y="60" width="7" height="23" rx="2" fill="#1e40af"/>
+                        <rect x="23" y="60" width="7" height="23" rx="2" fill="#1e40af"/>
+                        <path d="M11,34 L33,34 L32,61 L12,61 Z" fill="#e53935" stroke="#b71c1c" stroke-width="1.5"/>
+                        <circle cx="22" cy="17" r="13.5" fill="#f5b895" stroke="#5d4037" stroke-width="1.5"/>
+                        <path d="M8,15 C10,2 34,2 36,15 C28,9 16,9 8,15 Z" fill="#3e2723"/>
+                        <circle cx="18" cy="17" r="1.8" fill="#1e293b"/>
+                        <circle cx="26" cy="17" r="1.8" fill="#1e293b"/>
+                        <path d="M18,22 Q22,26 26,22 Z" fill="#d32f2f"/>
+                    </g>
+                </svg>
+            `,
+
+            // 2. park: Green park lawn with two lush trees, wooden sign/bench, and blue play dome/tent
+            park: `
+                <svg viewBox="0 0 180 110" class="w-full h-full">
+                    <!-- Green Grass Mound -->
+                    <ellipse cx="90" cy="92" rx="76" ry="14" fill="#8bc34a" stroke="#558b2f" stroke-width="1.5"/>
+                    <ellipse cx="90" cy="95" rx="65" ry="8" fill="#aed581"/>
+                    <!-- Left Big Tree -->
+                    <rect x="48" y="48" width="11" height="42" rx="2" fill="#795548" stroke="#4e342e" stroke-width="1.5"/>
+                    <path d="M44,55 L34,45 M58,52 L68,43" stroke="#795548" stroke-width="3.5" stroke-linecap="round"/>
+                    <circle cx="36" cy="40" r="18" fill="#558b2f"/>
+                    <circle cx="68" cy="38" r="17" fill="#33691e"/>
+                    <circle cx="52" cy="26" r="21" fill="#689f38"/>
+                    <circle cx="44" cy="36" r="14" fill="#8bc34a"/>
+                    <circle cx="62" cy="32" r="12" fill="#7cb342"/>
+                    <!-- Right Tree -->
+                    <rect x="122" y="54" width="9" height="36" rx="2" fill="#795548" stroke="#4e342e" stroke-width="1.5"/>
+                    <circle cx="114" cy="48" r="15" fill="#558b2f"/>
+                    <circle cx="138" cy="48" r="15" fill="#33691e"/>
+                    <circle cx="126" cy="36" r="17" fill="#7cb342"/>
+                    <circle cx="122" cy="44" r="11" fill="#9ccc65"/>
+                    <!-- Wooden Park Sign / Fence on Left -->
+                    <rect x="30" y="70" width="3" height="22" fill="#5d4037"/>
+                    <rect x="44" y="70" width="3" height="22" fill="#5d4037"/>
+                    <rect x="26" y="73" width="25" height="6" rx="1.5" fill="#ffa726" stroke="#5d4037" stroke-width="1.2"/>
+                    <rect x="26" y="81" width="25" height="5" rx="1.5" fill="#ffb74d" stroke="#5d4037" stroke-width="1.2"/>
+                    <!-- Blue Park Play Tent / Dome in Center-Right -->
+                    <path d="M74,90 C74,66 116,66 116,90 Z" fill="#42a5f5" stroke="#1e3a8a" stroke-width="1.8"/>
+                    <path d="M86,90 C86,75 104,75 104,90 Z" fill="#1e293b"/>
+                    <path d="M74,90 Q95,70 116,90" fill="none" stroke="#90caf9" stroke-width="2"/>
+                </svg>
+            `,
+
+            // 3. chair: Wooden/orange chair angled left with four dark legs
+            chair: `
+                <svg viewBox="0 0 160 115" class="w-full h-full">
+                    <ellipse cx="80" cy="105" rx="38" ry="5" fill="rgba(0,0,0,0.08)"/>
+                    <!-- Chair Back Frame & Legs -->
+                    <line x1="65" y1="58" x2="54" y2="102" stroke="#27272a" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="82" y1="62" x2="80" y2="105" stroke="#27272a" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="94" y1="56" x2="104" y2="96" stroke="#27272a" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="75" y1="54" x2="68" y2="92" stroke="#27272a" stroke-width="3.5" stroke-linecap="round"/>
+                    <!-- Backrest Vertical Posts -->
+                    <line x1="74" y1="20" x2="74" y2="54" stroke="#27272a" stroke-width="3.8" stroke-linecap="round"/>
+                    <line x1="96" y1="18" x2="94" y2="54" stroke="#27272a" stroke-width="3.8" stroke-linecap="round"/>
+                    <!-- Orange Wooden Backrest -->
+                    <path d="M70,12 L102,10 L100,29 L70,31 Z" fill="#d97706" stroke="#451a03" stroke-width="2.2" stroke-linejoin="round"/>
+                    <path d="M72,15 L99,13" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"/>
+                    <!-- Orange Wooden Seat -->
+                    <path d="M58,54 L76,47 L102,52 L83,61 Z" fill="#ea580c" stroke="#451a03" stroke-width="2.2" stroke-linejoin="round"/>
+                </svg>
+            `,
+
+            // 4. king: Royal king with golden crown, beard, purple & red cape with ermine trim, holding scepter
+            king: `
+                <svg viewBox="0 0 160 115" class="w-full h-full">
+                    <!-- Royal Cape (Purple & Red with White Fur Trim) -->
+                    <path d="M44,58 C34,76 30,94 32,104 L128,104 C130,94 126,76 116,58 Z" fill="#4c1d95" stroke="#1e1b4b" stroke-width="2"/>
+                    <path d="M62,60 L54,104 L106,104 L98,60 Z" fill="#b91c1c"/>
+                    <!-- White Fur Collar & Center Strip with Black Spots -->
+                    <path d="M74,58 L72,104 L88,104 L86,58 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                    <path d="M46,56 C58,68 102,68 114,56 C108,48 52,48 46,56 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.8"/>
+                    <circle cx="60" cy="58" r="1.6" fill="#1e293b"/>
+                    <circle cx="80" cy="61" r="1.6" fill="#1e293b"/>
+                    <circle cx="100" cy="58" r="1.6" fill="#1e293b"/>
+                    <circle cx="80" cy="76" r="1.6" fill="#1e293b"/>
+                    <circle cx="80" cy="92" r="1.6" fill="#1e293b"/>
+                    <!-- Head & Beard -->
+                    <circle cx="80" cy="40" r="15" fill="#fde0c5" stroke="#451a03" stroke-width="1.8"/>
+                    <path d="M65,40 C65,55 95,55 95,40 C91,44 86,45 80,45 C74,45 69,44 65,40 Z" fill="#5d4037" stroke="#27160c" stroke-width="1.5"/>
+                    <!-- Eyes & Mustache -->
+                    <circle cx="74" cy="36" r="2" fill="#1e293b"/>
+                    <circle cx="86" cy="36" r="2" fill="#1e293b"/>
+                    <path d="M71,42 Q80,39 89,42" fill="none" stroke="#27160c" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Golden Crown -->
+                    <path d="M63,28 L60,12 L71,20 L80,10 L89,20 L100,12 L97,28 Z" fill="#facc15" stroke="#854d0e" stroke-width="1.8" stroke-linejoin="round"/>
+                    <circle cx="80" cy="22" r="2.2" fill="#ef4444"/>
+                    <circle cx="70" cy="23" r="1.8" fill="#3b82f6"/>
+                    <circle cx="90" cy="23" r="1.8" fill="#3b82f6"/>
+                    <!-- Golden Scepter -->
+                    <line x1="94" y1="66" x2="112" y2="104" stroke="#eab308" stroke-width="3.5" stroke-linecap="round"/>
+                    <circle cx="93" cy="64" r="5" fill="#facc15" stroke="#854d0e" stroke-width="1.5"/>
+                    <circle cx="98" cy="74" r="5.5" fill="#fde0c5" stroke="#451a03" stroke-width="1.5"/>
+                </svg>
+            `,
+
+            // 5. school: Red two-story school building with bell tower, blue doors, windows, and green bushes
+            school: `
+                <svg viewBox="0 0 170 115" class="w-full h-full">
+                    <!-- Ground & Green Sidewalk -->
+                    <rect x="20" y="98" width="130" height="7" rx="3" fill="#4caf50" stroke="#1b5e20" stroke-width="1.5"/>
+                    <!-- Main Red Brick Building -->
+                    <rect x="30" y="50" width="110" height="48" fill="#d32f2f" stroke="#1e293b" stroke-width="2"/>
+                    <!-- Central Upper Tower & Bell Roof -->
+                    <rect x="62" y="28" width="46" height="70" fill="#e53935" stroke="#1e293b" stroke-width="2"/>
+                    <!-- Roofs -->
+                    <polygon points="22,52 85,20 148,52" fill="#b71c1c" stroke="#1e293b" stroke-width="2" stroke-linejoin="round"/>
+                    <polygon points="56,30 85,10 114,30" fill="#880e4f" stroke="#1e293b" stroke-width="2" stroke-linejoin="round"/>
+                    <!-- Golden Bell in Tower -->
+                    <path d="M80,26 C80,19 90,19 90,26 L92,29 L78,29 Z" fill="#ffd54f" stroke="#5d4037" stroke-width="1.5"/>
+                    <!-- "SCHOOL" Banner -->
+                    <rect x="65" y="47" width="40" height="10" rx="2" fill="#fff9c4" stroke="#1e293b" stroke-width="1.4"/>
+                    <text x="85" y="54.5" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="6.5" fill="#1e293b">SCHOOL</text>
+                    <!-- Blue Double Doors + Steps -->
+                    <rect x="72" y="64" width="26" height="30" fill="#29b6f6" stroke="#1e293b" stroke-width="2"/>
+                    <line x1="85" y1="64" x2="85" y2="94" stroke="#1e293b" stroke-width="2"/>
+                    <rect x="66" y="93" width="38" height="6" fill="#90a4ae" stroke="#1e293b" stroke-width="1.5"/>
+                    <!-- Windows (Left & Right) -->
+                    <g fill="#e1f5fe" stroke="#1e293b" stroke-width="1.6">
+                        <rect x="38" y="58" width="18" height="14" rx="1"/>
+                        <rect x="38" y="76" width="18" height="14" rx="1"/>
+                        <rect x="114" y="58" width="18" height="14" rx="1"/>
+                        <rect x="114" y="76" width="18" height="14" rx="1"/>
+                    </g>
+                    <!-- Green Bushes -->
+                    <circle cx="34" cy="95" r="7" fill="#43a047" stroke="#1b5e20" stroke-width="1.5"/>
+                    <circle cx="44" cy="96" r="6" fill="#66bb6a" stroke="#1b5e20" stroke-width="1.5"/>
+                    <circle cx="136" cy="95" r="7" fill="#43a047" stroke="#1b5e20" stroke-width="1.5"/>
+                    <circle cx="126" cy="96" r="6" fill="#66bb6a" stroke="#1b5e20" stroke-width="1.5"/>
+                </svg>
+            `,
+
+            // 6. horse: Brown horse standing in profile facing left with dark mane, tail, and hooves
+            horse: `
+                <svg viewBox="0 0 165 115" class="w-full h-full">
+                    <ellipse cx="85" cy="101" rx="48" ry="6" fill="rgba(0,0,0,0.10)"/>
+                    <!-- Tail -->
+                    <path d="M122,52 C136,54 138,76 130,86 C125,76 126,64 120,58 Z" fill="#27160c"/>
+                    <!-- Back Legs & Front Legs -->
+                    <path d="M68,66 L64,98" stroke="#6d3b23" stroke-width="6" stroke-linecap="round"/>
+                    <path d="M77,66 L79,97" stroke="#4e2816" stroke-width="5.5" stroke-linecap="round"/>
+                    <path d="M108,66 L105,98" stroke="#4e2816" stroke-width="5.5" stroke-linecap="round"/>
+                    <path d="M116,64 L120,98" stroke="#6d3b23" stroke-width="6" stroke-linecap="round"/>
+                    <!-- Hooves -->
+                    <rect x="60" y="96" width="7" height="4" rx="1" fill="#1e293b"/>
+                    <rect x="76" y="95" width="7" height="4" rx="1" fill="#1e293b"/>
+                    <rect x="102" y="96" width="7" height="4" rx="1" fill="#1e293b"/>
+                    <rect x="117" y="96" width="7" height="4" rx="1" fill="#1e293b"/>
+                    <!-- Horse Body & Neck -->
+                    <ellipse cx="94" cy="57" rx="30" ry="15" fill="#7c4328" stroke="#3e1f10" stroke-width="2"/>
+                    <path d="M72,56 L54,26 L40,34 L44,42 L56,39 L62,64 Z" fill="#7c4328" stroke="#3e1f10" stroke-width="2" stroke-linejoin="round"/>
+                    <!-- Dark Mane & Ears -->
+                    <path d="M55,24 C64,28 70,40 73,50 C67,44 62,36 55,28 Z" fill="#27160c"/>
+                    <polygon points="52,26 50,18 56,23" fill="#7c4328" stroke="#3e1f10" stroke-width="1.5"/>
+                    <!-- Eye & Bridle -->
+                    <circle cx="50" cy="31" r="2" fill="#1e293b"/>
+                    <circle cx="42" cy="37" r="2" fill="#e2e8f0"/>
+                </svg>
+            `,
+
+            // 7. ruler: Slanted wooden/tan 3D ruler with measurement tick marks
+            ruler: `
+                <svg viewBox="0 0 175 110" class="w-full h-full">
+                    <g transform="translate(88, 56) rotate(19) translate(-88, -56)">
+                        <!-- 3D Side Depth of Wooden Ruler -->
+                        <polygon points="18,45 158,45 154,68 14,68" fill="#b48352" stroke="#27160c" stroke-width="2.2" stroke-linejoin="round"/>
+                        <!-- Top bevel edge with measurement ticks -->
+                        <polygon points="22,38 162,38 158,45 18,45" fill="#dfc19b" stroke="#27160c" stroke-width="2" stroke-linejoin="round"/>
+                        <!-- Tick Marks -->
+                        <g stroke="#27160c" stroke-width="1.8" stroke-linecap="round">
+                            <line x1="30" y1="39" x2="28" y2="51"/>
+                            <line x1="40" y1="39" x2="39" y2="47"/>
+                            <line x1="50" y1="39" x2="48" y2="51"/>
+                            <line x1="60" y1="39" x2="59" y2="47"/>
+                            <line x1="70" y1="39" x2="68" y2="51"/>
+                            <line x1="80" y1="39" x2="79" y2="47"/>
+                            <line x1="90" y1="39" x2="88" y2="51"/>
+                            <line x1="100" y1="39" x2="99" y2="47"/>
+                            <line x1="110" y1="39" x2="108" y2="51"/>
+                            <line x1="120" y1="39" x2="119" y2="47"/>
+                            <line x1="130" y1="39" x2="128" y2="51"/>
+                            <line x1="140" y1="39" x2="139" y2="47"/>
+                            <line x1="150" y1="39" x2="148" y2="51"/>
+                        </g>
+                    </g>
+                </svg>
+            `,
+
+            // 8. Flower: Cute pink 6-petal flower with yellow center, green stem, and two green leaves
+            flower: `
+                <svg viewBox="0 0 150 115" class="w-full h-full">
+                    <!-- Green Stem -->
+                    <path d="M74,52 Q78,78 76,104" fill="none" stroke="#15803d" stroke-width="4.5" stroke-linecap="round"/>
+                    <!-- Two Green Leaves at Base -->
+                    <path d="M76,104 C56,96 52,72 66,76 C72,80 75,92 76,104 Z" fill="#4ade80" stroke="#14532d" stroke-width="2.2"/>
+                    <path d="M76,104 C96,98 102,74 88,76 C80,79 77,92 76,104 Z" fill="#22c55e" stroke="#14532d" stroke-width="2.2"/>
+                    <!-- 6 Pink Petals -->
+                    <g fill="#f472b6" stroke="#1e293b" stroke-width="2.2">
+                        <circle cx="74" cy="20" r="11"/>
+                        <circle cx="91" cy="29" r="11"/>
+                        <circle cx="91" cy="47" r="11"/>
+                        <circle cx="74" cy="56" r="11"/>
+                        <circle cx="57" cy="47" r="11"/>
+                        <circle cx="57" cy="29" r="11"/>
+                    </g>
+                    <!-- Yellow Flower Center -->
+                    <circle cx="74" cy="38" r="11.5" fill="#facc15" stroke="#1e293b" stroke-width="2.2"/>
+                </svg>
+            `,
+
+            // 9. hospital: Hospital building with "HOSPITAL" & red cross, plus surgeon in green scrubs & mask on right
+            hospital: `
+                <svg viewBox="0 0 180 115" class="w-full h-full">
+                    <!-- Sidewalk Base -->
+                    <rect x="14" y="92" width="152" height="12" rx="2" fill="#94a3b8" stroke="#334155" stroke-width="1.5"/>
+                    <!-- Hospital Building -->
+                    <rect x="20" y="22" width="136" height="70" fill="#cbd5e1" stroke="#334155" stroke-width="2"/>
+                    <rect x="16" y="16" width="144" height="10" rx="2" fill="#64748b" stroke="#1e293b" stroke-width="1.8"/>
+                    <!-- HOSPITAL Header Bar + Red Cross -->
+                    <rect x="24" y="27" width="128" height="14" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+                    <path d="M31,30 H35 V32 H37 V36 H35 V38 H31 V36 H29 V32 H31 Z" fill="#ef4444"/>
+                    <text x="86" y="37.5" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="11" fill="#0284c7" letter-spacing="1">HOSPITAL</text>
+                    <!-- Glass Windows & Entrance -->
+                    <rect x="28" y="46" width="34" height="22" fill="#bae6fd" stroke="#0369a1" stroke-width="1.5"/>
+                    <rect x="68" y="46" width="38" height="46" fill="#7dd3fc" stroke="#0369a1" stroke-width="1.8"/>
+                    <line x1="87" y1="46" x2="87" y2="92" stroke="#0369a1" stroke-width="1.8"/>
+                    <!-- Green Bushes -->
+                    <ellipse cx="45" cy="89" rx="18" ry="5" fill="#22c55e" stroke="#15803d" stroke-width="1.2"/>
+                    <!-- Doctor / Surgeon in Green Scrubs & Mask on Right -->
+                    <g transform="translate(110, 26)">
+                        <rect x="14" y="56" width="6" height="16" rx="2" fill="#1e293b"/>
+                        <rect x="24" y="56" width="6" height="16" rx="2" fill="#1e293b"/>
+                        <path d="M10,36 L34,36 L36,60 L8,60 Z" fill="#10b981" stroke="#065f46" stroke-width="1.8"/>
+                        <circle cx="22" cy="20" r="14" fill="#fde0c5" stroke="#1e293b" stroke-width="1.8"/>
+                        <!-- Surgical Cap -->
+                        <path d="M8,18 C8,4 36,4 36,18 Z" fill="#10b981" stroke="#065f46" stroke-width="1.8"/>
+                        <!-- Eyes -->
+                        <circle cx="17" cy="19" r="2" fill="#1e293b"/>
+                        <circle cx="27" cy="19" r="2" fill="#1e293b"/>
+                        <!-- White Face Mask -->
+                        <rect x="13" y="23" width="18" height="9" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1.4"/>
+                    </g>
+                </svg>
+            `,
+
+            // 10. Ahmed: Cartoon boy's head with black hair and confident smile
+            ahmed: `
+                <svg viewBox="0 0 150 115" class="w-full h-full">
+                    <!-- Ears -->
+                    <ellipse cx="35" cy="65" rx="7" ry="11" fill="#e6c29f" stroke="#1e293b" stroke-width="2.4"/>
+                    <ellipse cx="115" cy="65" rx="7" ry="11" fill="#e6c29f" stroke="#1e293b" stroke-width="2.4"/>
+                    <!-- Head -->
+                    <ellipse cx="75" cy="60" rx="40" ry="38" fill="#e6c29f" stroke="#1e293b" stroke-width="2.5"/>
+                    <!-- Black Spiky Bangs Hair -->
+                    <path d="M35,58 C32,25 52,14 75,14 C98,14 118,25 115,58 C110,46 104,42 98,48 C94,38 86,38 82,48 C76,38 68,40 62,48 C56,39 46,42 35,58 Z"
+                          fill="#1c1917" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+                    <!-- Eyebrows & Eyes -->
+                    <path d="M52,54 Q60,51 66,55" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M84,55 Q90,51 98,54" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+                    <ellipse cx="59" cy="61" rx="3.2" ry="2.4" fill="#0f172a"/>
+                    <ellipse cx="91" cy="61" rx="3.2" ry="2.4" fill="#0f172a"/>
+                    <!-- Nose & Confident Smile -->
+                    <path d="M73,68 Q75,70 77,68" fill="none" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+                    <path d="M56,77 Q75,88 94,76" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M68,86 Q75,89 82,86" fill="none" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            `,
+
+            // 11. monkey: Cute brown monkey hanging from a green branch holding a yellow banana
+            monkey: `
+                <svg viewBox="0 0 170 115" class="w-full h-full">
+                    <!-- Green Branch & Leaves -->
+                    <line x1="25" y1="16" x2="142" y2="42" stroke="#84cc16" stroke-width="3.8" stroke-linecap="round"/>
+                    <ellipse cx="92" cy="26" rx="4" ry="7" transform="rotate(-25 92 26)" fill="#15803d"/>
+                    <ellipse cx="106" cy="29" rx="4" ry="7" transform="rotate(20 106 29)" fill="#15803d"/>
+                    <ellipse cx="122" cy="33" rx="4" ry="7" transform="rotate(-15 122 33)" fill="#15803d"/>
+                    <!-- Curled Monkey Tail -->
+                    <path d="M98,74 C118,82 118,104 102,102 C96,101 96,94 102,94" fill="none" stroke="#451a03" stroke-width="3.5" stroke-linecap="round"/>
+                    <!-- Monkey Arms & Legs -->
+                    <path d="M74,56 C82,44 82,34 78,27" fill="none" stroke="#451a03" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M64,62 C52,68 44,68 38,62" fill="none" stroke="#451a03" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M94,68 L114,56 L124,62" fill="none" stroke="#451a03" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M92,76 L108,88 L120,84" fill="none" stroke="#451a03" stroke-width="5" stroke-linecap="round"/>
+                    <!-- Yellow Banana in Left Hand -->
+                    <path d="M30,54 C26,64 34,74 44,72 C38,68 35,61 36,54 Z" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+                    <!-- Monkey Body & Belly -->
+                    <ellipse cx="82" cy="68" rx="18" ry="13" transform="rotate(20 82 68)" fill="#5c2d16" stroke="#27160c" stroke-width="2"/>
+                    <ellipse cx="81" cy="69" rx="11" ry="8" transform="rotate(20 81 69)" fill="#fde0c5"/>
+                    <!-- Monkey Head & Ears -->
+                    <circle cx="52" cy="46" r="6" fill="#fde0c5" stroke="#27160c" stroke-width="1.8"/>
+                    <circle cx="80" cy="46" r="6" fill="#fde0c5" stroke="#27160c" stroke-width="1.8"/>
+                    <circle cx="66" cy="46" r="13" fill="#5c2d16" stroke="#27160c" stroke-width="2"/>
+                    <ellipse cx="66" cy="49" rx="10" ry="7.5" fill="#fde0c5"/>
+                    <circle cx="62" cy="44" r="2" fill="#1e293b"/>
+                    <circle cx="70" cy="44" r="2" fill="#1e293b"/>
+                    <path d="M62,51 Q66,55 70,51" fill="none" stroke="#27160c" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            `,
+
+            // 12. lion: Cartoon lion head facing left with full brown mane and happy roar/smile
+            lion: `
+                <svg viewBox="0 0 160 115" class="w-full h-full">
+                    <!-- Big Brown Lion Mane -->
+                    <path d="M52,24 C66,10 104,12 116,32 C128,50 124,82 106,96 C92,106 72,106 62,92 C48,84 44,68 48,54 C42,42 44,30 52,24 Z"
+                          fill="#7c4328" stroke="#27160c" stroke-width="2.4" stroke-linejoin="round"/>
+                    <!-- Round Ear -->
+                    <circle cx="96" cy="30" r="8" fill="#eab308" stroke="#27160c" stroke-width="2"/>
+                    <circle cx="96" cy="30" r="4" fill="#ca8a04"/>
+                    <!-- Yellow Lion Face -->
+                    <path d="M46,42 C46,26 84,26 88,46 C92,64 80,82 60,80 C44,78 36,64 42,52 Z"
+                          fill="#facc15" stroke="#27160c" stroke-width="2.2"/>
+                    <!-- Snout, Nose & Open Happy Mouth -->
+                    <ellipse cx="44" cy="52" rx="9" ry="7" fill="#fde047" stroke="#27160c" stroke-width="1.8"/>
+                    <polygon points="36,48 44,46 41,53" fill="#451a03"/>
+                    <path d="M44,58 C46,72 64,72 64,58 Z" fill="#991b1b" stroke="#27160c" stroke-width="1.8"/>
+                    <path d="M48,65 Q54,62 60,65 C58,70 50,70 48,65 Z" fill="#fb7185"/>
+                    <!-- Expressive Eye -->
+                    <ellipse cx="66" cy="43" rx="4" ry="5" fill="#ffffff" stroke="#27160c" stroke-width="1.8"/>
+                    <circle cx="65" cy="43" r="2.2" fill="#0f172a"/>
+                </svg>
+            `
+        };
+
+        /**
+         * All 12 Words in exact order from the poster (3 rows x 4 columns)
+         */
+        const WORD_CARDS = [
+            { id: 1,  word: 'Children', category: 'persons', svgKey: 'children' },
+            { id: 2,  word: 'park',     category: 'places',  svgKey: 'park'     },
+            { id: 3,  word: 'chair',    category: 'Things',  svgKey: 'chair'    },
+            { id: 4,  word: 'king',     category: 'persons', svgKey: 'king'     },
+            { id: 5,  word: 'school',   category: 'places',  svgKey: 'school'   },
+            { id: 6,  word: 'horse',    category: 'Animals', svgKey: 'horse'    },
+            { id: 7,  word: 'ruler',    category: 'Things',  svgKey: 'ruler'    },
+            { id: 8,  word: 'Flower',   category: 'Things',  svgKey: 'flower'   },
+            { id: 9,  word: 'hospital', category: 'places',  svgKey: 'hospital' },
+            { id: 10, word: 'Ahmed',    category: 'persons', svgKey: 'ahmed'    },
+            { id: 11, word: 'monkey',   category: 'Animals', svgKey: 'monkey'   },
+            { id: 12, word: 'lion',     category: 'Animals', svgKey: 'lion'     }
+        ];
+
+        /**
+         * The 4 Classification Categories at the bottom of the poster
+         */
+        const CATEGORIES = [
+            {
+                key: 'persons',
+                title: 'persons',
+                items: [
+                    { slot: 'a-', word: 'Children', cardId: 1  },
+                    { slot: 'b-', word: 'king',     cardId: 4  },
+                    { slot: 'c-', word: 'Ahmed',    cardId: 10 }
+                ]
+            },
+            {
+                key: 'places',
+                title: 'places',
+                items: [
+                    { slot: 'a-', word: 'park',     cardId: 2  },
+                    { slot: 'b-', word: 'school',   cardId: 5  },
+                    { slot: 'c-', word: 'hospital', cardId: 9  }
+                ]
+            },
+            {
+                key: 'Things',
+                title: 'Things',
+                items: [
+                    { slot: 'a-', word: 'chair',    cardId: 3  },
+                    { slot: 'b-', word: 'ruler',    cardId: 7  },
+                    { slot: 'c-', word: 'Flower',   cardId: 8  }
+                ]
+            },
+            {
+                key: 'Animals',
+                title: 'Animals',
+                items: [
+                    { slot: 'a-', word: 'horse',    cardId: 6  },
+                    { slot: 'b-', word: 'monkey',   cardId: 11 },
+                    { slot: 'c-', word: 'lion',     cardId: 12 }
+                ]
+            }
+        ];
+
+        // ==================== STATE MANAGEMENT ====================
+        let currentFingerTargetEl = null;
+        let isAutoPlaying = false;
+        let autoPlayTimeout = null;
+        let stepTimers = [];
+        let showAllAnswers = true;
+
+        let speechRates = [
+            { value: 0.84, label: "السرعة: تعليمي واضح" },
+            { value: 0.68, label: "السرعة: بطيء للتأسيس" },
+            { value: 0.98, label: "السرعة: طبيعي" }
+        ];
+        let currentSpeedIdx = 0;
+        let repeatTwice = false;
+
+        // ==================== RENDER 12 CARDS & 4 CATEGORY BOXES ====================
+        function renderWorksheet() {
+            // 1. Render 12 Word Cards
+            const cardsGrid = document.getElementById('cards-grid');
+            cardsGrid.innerHTML = '';
+
+            WORD_CARDS.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.id = `word-card-${card.id}`;
+                cardEl.className = 'word-card-wrap select-none';
+                cardEl.onclick = (e) => handleCardClick(e, card.id);
+
+                cardEl.innerHTML = `
+                    <!-- Top Light-Blue Pill with the English Word -->
+                    <div id="card-pill-${card.id}" class="word-pill-label" title="اضغط لسماع كلمة (${card.word})">
+                        ${card.word}
+                    </div>
+
+                    <!-- Top-Right 4-Pointed Teal Star -->
+                    <svg class="star-top-right" viewBox="0 0 32 32">
+                        <path d="M16,1 L20,12 L31,16 L20,20 L16,31 L12,20 L1,16 L12,12 Z" fill="#4db6ac" stroke="#1e293b" stroke-width="1.8" stroke-linejoin="round"/>
+                    </svg>
+
+                    <!-- Main Rounded Frame with Exact Illustration -->
+                    <div class="word-card-box">
+                        <div id="card-illust-${card.id}" class="w-full h-full flex items-center justify-center overflow-hidden">
+                            ${CARD_SVGS[card.svgKey]}
+                        </div>
+                    </div>
+
+                    <!-- Bottom-Left 4-Pointed Purple Star -->
+                    <svg class="star-bottom-left" viewBox="0 0 32 32">
+                        <path d="M16,1 L20,12 L31,16 L20,20 L16,31 L12,20 L1,16 L12,12 Z" fill="#9575cd" stroke="#1e293b" stroke-width="1.8" stroke-linejoin="round"/>
+                    </svg>
+                `;
+
+                cardsGrid.appendChild(cardEl);
+            });
+
+            // 2. Render 4 Category Boxes
+            const catGrid = document.getElementById('categories-grid');
+            catGrid.innerHTML = '';
+
+            CATEGORIES.forEach(cat => {
+                const catBox = document.createElement('div');
+                catBox.className = 'category-outer-frame select-none';
+
+                const rowsHtml = cat.items.map((item, idx) => `
+                    <div id="cat-row-${cat.key}-${idx}" class="cat-slot-row" onclick="handleCategorySlotClick(event, '${cat.key}', ${idx})">
+                        <span class="worksheet-font text-[21px] sm:text-[23px] font-black text-slate-900 w-7 shrink-0">${item.slot}</span>
+                        <span id="cat-word-${cat.key}-${idx}" class="cat-answer-word worksheet-font text-[21px] sm:text-[23px]">${item.word}</span>
+                    </div>
+                `).join('');
+
+                catBox.innerHTML = `
+                    <!-- Category Header Pill (persons, places, Things, Animals) -->
+                    <div id="cat-pill-${cat.key}" class="category-header-pill" onclick="handleCategoryTitleClick(event, '${cat.key}')" title="اضغط لقراءة التصنيف (${cat.title})">
+                        <span class="w-4 h-4 rounded-sm bg-rose-100 border border-rose-400 inline-flex items-center justify-center text-[9px] text-rose-600">♥</span>
+                        <span id="cat-title-word-${cat.key}" class="worksheet-font font-black text-[19px] sm:text-[21px] text-slate-900">${cat.title}</span>
+                    </div>
+
+                    <!-- White Inner Box with a-, b-, c- -->
+                    <div class="category-inner-paper space-y-1">
+                        ${rowsHtml}
+                    </div>
+                `;
+
+                catGrid.appendChild(catBox);
+            });
+        }
+
+        // ==================== STEADY POINTING FINGER POSITIONING ====================
+        /**
+         * Places the pointing finger steadily right underneath the target whole word element
+         * WITHOUT moving across letters or bobbing.
+         */
+        function placeFingerUnderElement(el) {
+            const finger = document.getElementById('reading-finger');
+            if (!el || !finger) return;
+
+            currentFingerTargetEl = el;
+            const rect = el.getBoundingClientRect();
+            const targetX = rect.left + (rect.width / 2);
+            const targetY = rect.bottom - 3;
+
+            finger.style.left = `${targetX}px`;
+            finger.style.top = `${targetY}px`;
+            finger.classList.add('visible', 'reading-active');
+        }
+
+        function clearActiveHighlights() {
+            document.querySelectorAll('.word-card-wrap, .cat-slot-row').forEach(el => el.classList.remove('active-reading'));
+            document.querySelectorAll('.word-pill-label, .category-header-pill, .cat-answer-word, .target-word-box').forEach(el => el.classList.remove('word-active'));
+        }
+
+        function clearStepTimers() {
+            stepTimers.forEach(t => clearTimeout(t));
+            stepTimers = [];
+        }
+
+        // Keep finger aligned on scroll or window resize
+        window.addEventListener('scroll', () => {
+            if (currentFingerTargetEl) placeFingerUnderElement(currentFingerTargetEl);
+        }, { passive: true });
+        window.addEventListener('resize', () => {
+            if (currentFingerTargetEl) placeFingerUnderElement(currentFingerTargetEl);
+        });
+
+        // ==================== EDUCATIONAL NATURAL VOICE ENGINE ====================
+        let preferredEnglishVoice = null;
+        let availableEnglishVoices = [];
+
+        function scoreVoiceQuality(v) {
+            let score = 0;
+            const name = v.name.toLowerCase();
+            const lang = v.lang.toLowerCase();
+
+            if (!lang.startsWith('en')) return -999;
+
+            if (lang === 'en-us' || lang === 'en_us') score += 35;
+            else if (lang === 'en-gb' || lang === 'en_gb') score += 30;
+            else score += 15;
+
+            if (name.includes('natural')) score += 60;
+            if (name.includes('online')) score += 40;
+            if (name.includes('neural')) score += 50;
+            if (name.includes('premium') || name.includes('enhanced')) score += 45;
+
+            const topTeacherVoices = [
+                'ava', 'aria', 'jenny', 'ana', 'sonia', 'libby', 'ryan', 'guy',
+                'google us english', 'google uk english female', 'samantha',
+                'allison', 'karen', 'daniel', 'moira', 'serena', 'zira'
+            ];
+            for (let i = 0; i < topTeacherVoices.length; i++) {
+                if (name.includes(topTeacherVoices[i])) {
+                    score += (35 - i);
+                    break;
+                }
+            }
+
+            if (name.includes('compact') || name.includes('espeak')) score -= 50;
+            return score;
+        }
+
+        function loadPreferredEnglishVoice() {
+            if (!('speechSynthesis' in window)) return;
+            const voices = window.speechSynthesis.getVoices();
+            if (!voices.length) return;
+
+            availableEnglishVoices = voices
+                .filter(v => v.lang && v.lang.toLowerCase().startsWith('en'))
+                .sort((a, b) => scoreVoiceQuality(b) - scoreVoiceQuality(a));
+
+            if (availableEnglishVoices.length > 0) {
+                preferredEnglishVoice = availableEnglishVoices[0];
+            }
+
+            const selectEl = document.getElementById('voice-select');
+            if (selectEl && availableEnglishVoices.length > 0) {
+                const currentVal = selectEl.value;
+                selectEl.innerHTML = '';
+
+                availableEnglishVoices.slice(0, 12).forEach((v, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = v.name;
+                    const cleanLabel = v.name
+                        .replace(/Microsoft |Google |Apple /g, '')
+                        .replace(/Online \(Natural\) - /g, '🌟 ')
+                        .replace(/English /g, '');
+                    opt.textContent = idx === 0 ? `🌟 ${cleanLabel} (أفضل صوت تعليمي)` : `🎙️ ${cleanLabel}`;
+                    selectEl.appendChild(opt);
+                });
+
+                if (currentVal && currentVal !== 'auto' && availableEnglishVoices.some(v => v.name === currentVal)) {
+                    selectEl.value = currentVal;
+                    preferredEnglishVoice = availableEnglishVoices.find(v => v.name === currentVal);
+                } else if (preferredEnglishVoice) {
+                    selectEl.value = preferredEnglishVoice.name;
+                }
+            }
+        }
+
+        function handleVoiceChange(voiceName) {
+            const found = availableEnglishVoices.find(v => v.name === voiceName);
+            if (found) {
+                preferredEnglishVoice = found;
+                readCardWord(1);
+            }
+        }
+
+        if ('speechSynthesis' in window) {
+            loadPreferredEnglishVoice();
+            window.speechSynthesis.onvoiceschanged = loadPreferredEnglishVoice;
+        }
+
+        /**
+         * Core English TTS Helper: Speaks English text while keeping the highlight
+         * and pointing finger 100% STATIC under `targetEl`.
+         */
+        function speakEnglishText(textToSpeak, targetEl, containerEl, onEndCallback) {
+            clearStepTimers();
+            clearActiveHighlights();
+
+            if (containerEl) containerEl.classList.add('active-reading');
+            if (targetEl) {
+                targetEl.classList.add('word-active');
+                placeFingerUnderElement(targetEl);
+            }
+
+            const playOnce = (doneOnce) => {
+                if (!('speechSynthesis' in window)) {
+                    stepTimers.push(setTimeout(() => { if (doneOnce) doneOnce(); }, 900));
+                    return;
+                }
+
+                const utter = new SpeechSynthesisUtterance(textToSpeak);
+                utter.lang = preferredEnglishVoice ? preferredEnglishVoice.lang : 'en-US';
+                if (preferredEnglishVoice) utter.voice = preferredEnglishVoice;
+                utter.rate = speechRates[currentSpeedIdx].value;
+                utter.pitch = 1.04;
+
+                utter.onend = () => { if (doneOnce) doneOnce(); };
+                utter.onerror = () => { if (doneOnce) doneOnce(); };
+
+                window.speechSynthesis.speak(utter);
+            };
+
+            playOnce(() => {
+                if (repeatTwice) {
+                    stepTimers.push(setTimeout(() => {
+                        playOnce(() => {
+                            if (onEndCallback) onEndCallback();
+                        });
+                    }, 380));
+                } else {
+                    if (onEndCallback) onEndCallback();
+                }
+            });
+        }
+
+        // ==================== INTERACTION HANDLERS ====================
+
+        /**
+         * Clicking one of the 12 illustrated word cards:
+         * Places the steady finger under the card's word pill, highlights it steadily,
+         * and speaks the English word clearly.
+         */
+        function handleCardClick(event, cardId) {
+            event.stopPropagation();
+            if (isAutoPlaying) stopAutoPlay();
+            readCardWord(cardId);
+        }
+
+        function readCardWord(cardId, onComplete) {
+            const card = WORD_CARDS.find(c => c.id === cardId);
+            if (!card) return;
+
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+            const cardWrap = document.getElementById(`word-card-${card.id}`);
+            const pillEl = document.getElementById(`card-pill-${card.id}`);
+
+            // Also reveal its corresponding slot in the category box if hidden
+            const catObj = CATEGORIES.find(c => c.key === card.category);
+            if (catObj) {
+                const idx = catObj.items.findIndex(i => i.cardId === card.id);
+                if (idx !== -1) {
+                    const slotRow = document.getElementById(`cat-row-${catObj.key}-${idx}`);
+                    if (slotRow) slotRow.classList.add('revealed');
+                }
+            }
+
+            speakEnglishText(card.word, pillEl, cardWrap, onComplete);
+        }
+
+        /**
+         * Clicking a Category Header Pill (e.g., "persons", "places", "Things", "Animals")
+         * Reads the category title, then reads its 3 classified words in sequence.
+         */
+        function handleCategoryTitleClick(event, catKey) {
+            event.stopPropagation();
+            if (isAutoPlaying) stopAutoPlay();
+            readSingleCategorySequence(catKey);
+        }
+
+        function readSingleCategorySequence(catKey, onComplete) {
+            const cat = CATEGORIES.find(c => c.key === catKey);
+            if (!cat) return;
+
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            const catPill = document.getElementById(`cat-pill-${cat.key}`);
+
+            speakEnglishText(cat.title, catPill, null, () => {
+                let itemIdx = 0;
+                function nextSlot() {
+                    if (itemIdx >= cat.items.length) {
+                        if (onComplete) onComplete();
+                        return;
+                    }
+                    const slotRow = document.getElementById(`cat-row-${cat.key}-${itemIdx}`);
+                    const wordEl = document.getElementById(`cat-word-${cat.key}-${itemIdx}`);
+                    if (slotRow) slotRow.classList.add('revealed');
+
+                    stepTimers.push(setTimeout(() => {
+                        speakEnglishText(cat.items[itemIdx].word, wordEl, slotRow, () => {
+                            itemIdx++;
+                            nextSlot();
+                        });
+                    }, 260));
+                }
+                nextSlot();
+            });
+        }
+
+        /**
+         * Clicking a specific slot row (a-, b-, c-) inside a Category Box
+         */
+        function handleCategorySlotClick(event, catKey, itemIdx) {
+            event.stopPropagation();
+            if (isAutoPlaying) stopAutoPlay();
+
+            const cat = CATEGORIES.find(c => c.key === catKey);
+            if (!cat || !cat.items[itemIdx]) return;
+
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+            const item = cat.items[itemIdx];
+            const slotRow = document.getElementById(`cat-row-${cat.key}-${itemIdx}`);
+            const wordEl = document.getElementById(`cat-word-${cat.key}-${itemIdx}`);
+            if (slotRow) slotRow.classList.add('revealed');
+
+            // Also highlight the matching card above so the student sees the visual connection
+            const matchingCard = document.getElementById(`word-card-${item.cardId}`);
+
+            speakEnglishText(item.word, wordEl, slotRow);
+            if (matchingCard) matchingCard.classList.add('active-reading');
+        }
+
+        /**
+         * Speaks standalone English headings/badges ("Top Grammar", "Classify words", "Mrs. Engy Moris", "Top")
+         */
+        function speakStandaloneWord(textToSpeak, targetEl) {
+            if (isAutoPlaying) stopAutoPlay();
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            speakEnglishText(textToSpeak, targetEl, null);
+        }
+
+        // ==================== SEQUENTIAL AUTO-PLAY ====================
+        function toggleAutoPlay() {
+            if (isAutoPlaying) {
+                stopAutoPlay();
+            } else {
+                startAutoPlayAll();
+            }
+        }
+
+        /**
+         * Reads all 12 Word Cards (1 to 12) in order, then reads all 4 Category Boxes
+         */
+        function startAutoPlayAll() {
+            isAutoPlaying = true;
+            updateAutoPlayButtonUI();
+
+            let cardIdx = 0;
+
+            function playNextCard() {
+                if (!isAutoPlaying) return;
+
+                if (cardIdx < WORD_CARDS.length) {
+                    const card = WORD_CARDS[cardIdx];
+                    const cardEl = document.getElementById(`word-card-${card.id}`);
+                    if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                    autoPlayTimeout = setTimeout(() => {
+                        if (!isAutoPlaying) return;
+                        readCardWord(card.id, () => {
+                            if (!isAutoPlaying) return;
+                            cardIdx++;
+                            autoPlayTimeout = setTimeout(playNextCard, 450);
+                        });
+                    }, 120);
+                } else {
+                    // Proceed to the 4 Category Boxes
+                    let catIdx = 0;
+                    function playNextCat() {
+                        if (!isAutoPlaying || catIdx >= CATEGORIES.length) {
+                            stopAutoPlay();
+                            return;
+                        }
+                        const cat = CATEGORIES[catIdx];
+                        const catPill = document.getElementById(`cat-pill-${cat.key}`);
+                        if (catPill) catPill.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                        autoPlayTimeout = setTimeout(() => {
+                            if (!isAutoPlaying) return;
+                            readSingleCategorySequence(cat.key, () => {
+                                if (!isAutoPlaying) return;
+                                catIdx++;
+                                autoPlayTimeout = setTimeout(playNextCat, 550);
+                            });
+                        }, 200);
+                    }
+                    playNextCat();
+                }
+            }
+
+            playNextCard();
+        }
+
+        /**
+         * Reads only the 4 Classification Categories at the bottom in order
+         */
+        function playCategoriesInOrder() {
+            if (isAutoPlaying) stopAutoPlay();
+            isAutoPlaying = true;
+            updateAutoPlayButtonUI();
+
+            let catIdx = 0;
+            function nextCategory() {
+                if (!isAutoPlaying || catIdx >= CATEGORIES.length) {
+                    stopAutoPlay();
+                    return;
+                }
+                const cat = CATEGORIES[catIdx];
+                const catPill = document.getElementById(`cat-pill-${cat.key}`);
+                if (catPill) catPill.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                autoPlayTimeout = setTimeout(() => {
+                    if (!isAutoPlaying) return;
+                    readSingleCategorySequence(cat.key, () => {
+                        if (!isAutoPlaying) return;
+                        catIdx++;
+                        autoPlayTimeout = setTimeout(nextCategory, 500);
+                    });
+                }, 150);
+            }
+            nextCategory();
+        }
+
+        function stopAutoPlay() {
+            isAutoPlaying = false;
+            clearStepTimers();
+            if (autoPlayTimeout) {
+                clearTimeout(autoPlayTimeout);
+                autoPlayTimeout = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            updateAutoPlayButtonUI();
+        }
+
+        function updateAutoPlayButtonUI() {
+            const icon = document.getElementById('icon-auto-play');
+            const text = document.getElementById('text-auto-play');
+
+            if (isAutoPlaying) {
+                icon.className = 'fa-solid fa-stop';
+                text.textContent = 'إيقاف القراءة الآلية';
+            } else {
+                icon.className = 'fa-solid fa-play';
+                text.textContent = 'قراءة الكل بالترتيب';
+            }
+        }
+
+        // ==================== TOOLBAR CONTROLS ====================
+        function toggleShowAllAnswers() {
+            showAllAnswers = !showAllAnswers;
+            const container = document.getElementById('poster-container');
+            const btn = document.getElementById('btn-answers');
+            const label = document.getElementById('answers-label');
+            container.classList.toggle('show-all-answers', showAllAnswers);
+
+            if (!showAllAnswers) {
+                document.querySelectorAll('.cat-slot-row').forEach(el => el.classList.remove('revealed'));
+                label.textContent = 'إظهار التصنيف';
+                btn.className = 'flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-rose-800 bg-rose-100 hover:bg-rose-200 border border-rose-200 transition text-xs sm:text-sm';
+            } else {
+                label.textContent = 'التصنيف معروض';
+                btn.className = 'flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-700 border border-rose-600 shadow-sm transition text-xs sm:text-sm';
+            }
+        }
+
+        function cycleSpeechSpeed() {
+            currentSpeedIdx = (currentSpeedIdx + 1) % speechRates.length;
+            document.getElementById('speed-label').textContent = speechRates[currentSpeedIdx].label;
+        }
+
+        function toggleRepeatWord() {
+            repeatTwice = !repeatTwice;
+            const label = document.getElementById('repeat-label');
+            label.textContent = repeatTwice ? 'النطق: مرتان للحفظ' : 'النطق: مرة واحدة';
+        }
+
+        // Initialize on Window Load
+        window.onload = function() {
+            renderWorksheet();
+        };
+    </script>
+</body>
+</html>
